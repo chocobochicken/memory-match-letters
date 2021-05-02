@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="org.jbuege.android.matchgame.GameFragmentViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/activity_background">
+
+        <include
+            android:id="@+id/cell_0_0"
+            layout="@layout/card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:col="@{0}"
+            app:layout_constraintBottom_toTopOf="@+id/cell_1_0"
+            app:layout_constraintEnd_toStartOf="@+id/cell_0_1"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:row="@{0}"
+            app:viewModel="@{viewModel}" />
+
+        <include
+            android:id="@+id/cell_0_1"
+            layout="@layout/card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:col="@{1}"
+            app:layout_constraintEnd_toStartOf="@+id/cell_0_2"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cell_0_0"
+            app:layout_constraintTop_toTopOf="@id/cell_0_0"
+            app:row="@{0}"
+            app:viewModel="@{viewModel}" />
+
+        <include
+            android:id="@+id/cell_0_2"
+            layout="@layout/card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:col="@{2}"
+            app:layout_constraintEnd_toStartOf="@+id/cell_0_3"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cell_0_1"
+            app:layout_constraintTop_toTopOf="@id/cell_0_0"
+            app:row="@{0}"
+            app:viewModel="@{viewModel}" />
+
+        <include
+            android:id="@+id/cell_0_3"
+            layout="@layout/card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:col="@{3}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cell_0_2"
+            app:layout_constraintTop_toTopOf="@id/cell_0_0"
+            app:row="@{0}"
+            app:viewModel="@{viewModel}" />
+
+        <include
+            android:id="@+id/cell_1_0"
+            layout="@layout/card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:col="@{0}"
+            app:layout_constraintBottom_toTopOf="@+id/cell_2_0"
+            app:layout_constraintEnd_toStartOf="@+id/cell_1_1"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cell_0_0"
+            app:row="@{1}"
+            app:viewModel="@{viewModel}" />
+
+        <include
+            android:id="@+id/cell_1_1"
+            layout="@layout/card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:col="@{1}"
+            app:layout_constraintEnd_toStartOf="@+id/cell_1_2"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cell_1_0"
+            app:layout_constraintTop_toTopOf="@id/cell_1_0"
+            app:row="@{1}"
+            app:viewModel="@{viewModel}" />
+
+        <include
+            android:id="@+id/cell_1_2"
+            layout="@layout/card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:col="@{2}"
+            app:layout_constraintEnd_toStartOf="@+id/cell_1_3"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cell_1_1"
+            app:layout_constraintTop_toTopOf="@id/cell_1_0"
+            app:row="@{1}"
+            app:viewModel="@{viewModel}" />
+
+        <include
+            android:id="@+id/cell_1_3"
+            layout="@layout/card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:col="@{3}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cell_1_2"
+            app:layout_constraintTop_toTopOf="@id/cell_1_0"
+            app:row="@{1}"
+            app:viewModel="@{viewModel}" />
+
+        <include
+            android:id="@+id/cell_2_0"
+            layout="@layout/card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:col="@{0}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/cell_2_1"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cell_1_0"
+            app:row="@{2}"
+            app:viewModel="@{viewModel}" />
+
+        <include
+            android:id="@+id/cell_2_1"
+            layout="@layout/card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:col="@{1}"
+            app:layout_constraintEnd_toStartOf="@+id/cell_2_2"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cell_2_0"
+            app:layout_constraintTop_toTopOf="@id/cell_2_0"
+            app:row="@{2}"
+            app:viewModel="@{viewModel}" />
+
+        <include
+            android:id="@+id/cell_2_2"
+            layout="@layout/card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:col="@{2}"
+            app:layout_constraintEnd_toStartOf="@+id/cell_2_3"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cell_2_1"
+            app:layout_constraintTop_toTopOf="@id/cell_2_0"
+            app:row="@{2}"
+            app:viewModel="@{viewModel}" />
+
+        <include
+            android:id="@+id/cell_2_3"
+            layout="@layout/card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:col="@{3}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cell_2_2"
+            app:layout_constraintTop_toTopOf="@id/cell_2_0"
+            app:row="@{2}"
+            app:viewModel="@{viewModel}" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/win_background"
+            android:onClick="@{() -> viewModel.onGameRestart()}"
+            android:orientation="vertical"
+            android:visibility="@{viewModel.youWinVisibility}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/txtYouWin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="20dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:fontFamily="@font/bubblegumsans_regular"
+                android:text="@string/you_win"
+                android:textColor="@color/gold"
+                android:textSize="50sp" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/bubblegumsans_regular"
+                android:text="@string/tap_to_play_again"
+                android:textColor="@color/gold"
+                android:textSize="30sp" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

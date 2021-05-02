@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Memory Match: Letters</string>
+    <string name="card_content_description_format">Row %d Column %d</string>
+    <string name="you_win">You win!!!</string>
+    <string name="tap_to_play_again">Tap to play again!</string>
+</resources>
