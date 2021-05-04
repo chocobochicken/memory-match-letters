@@ -6,8 +6,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.util.concurrent.CancellationException
 
 typealias Row = List<CardViewModel>
 typealias Grid = List<Row>
@@ -27,7 +30,8 @@ class GameFragmentViewModel(
     private var firstCardViewModel: CardViewModel? = null
     private var secondCardViewModel: CardViewModel? = null
 
-    private var eventMismatchDisplay = false
+    // private var eventMismatchDisplay = false
+    private var jobMismatchDisplay: Job? = null
 
     private var eventGameWon = false
 
@@ -62,10 +66,11 @@ class GameFragmentViewModel(
         val card = grid[row][col]
 
         // If currently displaying mismatch on a delayed timer
-        if (eventMismatchDisplay) {
-                // Let user short-circuit display to pick their next cards
-                onMismatchDisplayCompleted()
-                return
+        if (jobMismatchDisplay != null) {
+            // Let user short-circuit display to pick their next cards
+            jobMismatchDisplay?.cancel(CancellationException("User cancellation of mismatch display."))
+            onMismatchDisplayCompleted()
+            return
         }
 
         // Ignore if already selected or matched
@@ -98,7 +103,6 @@ class GameFragmentViewModel(
             "gameState: matchedPairs=$matchedPairs "
                     + "first:${firstCardViewModel?.content?.value} "
                     + "second:${secondCardViewModel?.content?.value} "
-                    + "mismatch=$eventMismatchDisplay"
                     + "gameCompleted=$eventGameWon"
         )
     }
@@ -117,10 +121,9 @@ class GameFragmentViewModel(
 
     private fun onMatchUnsuccessful() {
         Log.d(TAG, "onMatchUnsuccessful: started")
-        eventMismatchDisplay = true
-        viewModelScope.launch {
+        jobMismatchDisplay = viewModelScope.launch {
             delay(3000)
-            if (eventMismatchDisplay) {
+            if (isActive) {
                 onMismatchDisplayCompleted()
             } else {
                 Log.d(TAG, "onMatchUnsuccessful: mismatch reset preempted")
@@ -129,12 +132,12 @@ class GameFragmentViewModel(
     }
 
     private fun onMismatchDisplayCompleted() {
-        Log.d(TAG, "onMatchUnsuccessful: resetting selected cards")
+        Log.d(TAG, "onMismatchDisplayCompleted: resetting selected cards")
         firstCardViewModel?.turnFaceDown()
         firstCardViewModel = null
         secondCardViewModel?.turnFaceDown()
         secondCardViewModel = null
-        eventMismatchDisplay = false
+        jobMismatchDisplay = null
     }
 
     private fun onGameCompleted() {
