@@ -73,7 +73,7 @@ class GameFragmentViewModel(
         }
 
         // Ignore if already selected or matched
-        if (card.faceUp.value == true) {
+        if (card.isFaceUp.value == true) {
             Log.d(TAG, "onCardSelected: ($row, $col) already faceup.")
             return
         }

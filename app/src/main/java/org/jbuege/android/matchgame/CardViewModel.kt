@@ -22,21 +22,27 @@ class CardViewModel(
     /**
      * Indicates if card is turned face-up.
      */
-    val faceUp: LiveData<Boolean> by this::_faceUp
-    private val _faceUp: MutableLiveData<Boolean> = MutableLiveData(false)
+    val isFaceUp: LiveData<Boolean> by this::_isFaceUp
+    private val _isFaceUp: MutableLiveData<Boolean> = MutableLiveData(false)
 
     /**
      * Indicates if text content should be visible.
      */
-    val contentVisible = Transformations.map(faceUp) { faceUp ->
+    val isContentVisible = Transformations.map(isFaceUp) { faceUp ->
         if (faceUp) View.VISIBLE else View.INVISIBLE
     }
 
     /**
      * Indicates if card has been successfully paired with its match.
      */
-    val matched: LiveData<Boolean> by this::_matched
+    val isMatched: LiveData<Boolean> by this::_matched
     private val _matched = MutableLiveData(false)
+
+    /**
+     * Indicates if card is currently interactive.
+     */
+    val isEnabled: LiveData<Boolean> by this::_isEnabled
+    private val _isEnabled = MutableLiveData(true)
 
     /**
      * The resource to display in the card background.
@@ -45,10 +51,21 @@ class CardViewModel(
     private val _backgroundId = MutableLiveData<Int>(BACK_BACKGROUND)
 
     /**
+     * Flip the card from face-up to face-down, or vice versa.
+     */
+    fun flip() {
+        when (_isFaceUp.value) {
+            true -> turnFaceDown()
+            else -> turnFaceUp()
+        }
+    }
+
+    /**
      * Turns the card to the face-up position.
      */
     fun turnFaceUp() {
-        _faceUp.value = true
+        if (_isEnabled.value != true) return
+        _isFaceUp.value = true
         _backgroundId.value = R.drawable.ic_card_yellow_background
     }
 
@@ -56,7 +73,8 @@ class CardViewModel(
      * Turns the card to the face-down position.
      */
     fun turnFaceDown() {
-        _faceUp.value = false
+        if (_isEnabled.value != true) return
+        _isFaceUp.value = false
         _backgroundId.value = BACK_BACKGROUND
     }
 
@@ -69,7 +87,7 @@ class CardViewModel(
     }
 
     private fun reset() {
-        _faceUp.value = false
+        _isFaceUp.value = false
         _matched.value = false
         _backgroundId.value = BACK_BACKGROUND
     }
@@ -83,9 +101,9 @@ class CardViewModel(
     }
 
     override fun toString(): String {
-        val faceUp = if (faceUp.value == true) "faceUp" else "faceDown"
-        val contentVisible = if (contentVisible.value == View.VISIBLE) "contentVisible" else "contentInvisible"
-        val matched = if (matched.value == true) "matched" else "unmatched"
+        val faceUp = if (isFaceUp.value == true) "faceUp" else "faceDown"
+        val contentVisible = if (isContentVisible.value == View.VISIBLE) "contentVisible" else "contentInvisible"
+        val matched = if (isMatched.value == true) "matched" else "unmatched"
         return "{content=${content.value}, $faceUp $contentVisible $matched bgId=${backgroundId.value}}"
     }
 

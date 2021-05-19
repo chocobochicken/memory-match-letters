@@ -5,8 +5,11 @@
 
     <data>
         <variable
-            name="viewModel"
+            name="gameViewModel"
             type="org.jbuege.android.matchgame.GameFragmentViewModel" />
+        <variable
+            name="cardViewModel"
+            type="org.jbuege.android.matchgame.CardViewModel" />
         <variable
             name="row"
             type="int" />
@@ -23,8 +26,8 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:contentDescription="@{@string/card_content_description_format(row,col)}"
-            android:onClick="@{() -> viewModel.onCardSelected(row,col)}"
-            app:imageResource="@{viewModel.grid.get(row).get(col).backgroundId}"
+            android:onClick="@{() -> gameViewModel.onCardSelected(row,col)}"
+            app:imageResource="@{cardViewModel.backgroundId}"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -40,8 +43,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:text="@{viewModel.grid.get(row).get(col).content}"
-            android:visibility="@{viewModel.grid.get(row).get(col).contentVisible}"
+            android:text="@{cardViewModel.content}"
+            android:visibility="@{cardViewModel.isContentVisible}"
             tools:text="#"
             tools:visibility="visible" />
 
