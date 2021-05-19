@@ -30,7 +30,6 @@ class GameFragmentViewModel(
     private var firstCardViewModel: CardViewModel? = null
     private var secondCardViewModel: CardViewModel? = null
 
-    // private var eventMismatchDisplay = false
     private var jobMismatchDisplay: Job? = null
 
     private var eventGameWon = false
