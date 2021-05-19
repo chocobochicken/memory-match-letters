@@ -1,9 +1,7 @@
 package org.jbuege.android.matchgame
 
 import android.util.Log
-import android.view.View
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
@@ -32,10 +30,7 @@ class GameFragmentViewModel(
 
     private var jobMismatchDisplay: Job? = null
 
-    private var eventGameWon = false
-
-    private val _youWinVisibility = MutableLiveData(View.GONE)
-    val youWinVisibility: LiveData<Int> by this::_youWinVisibility
+    val youWinViewModel = YouWinViewModel()
 
     init {
         Log.d(TAG, "init: initialized")
@@ -72,14 +67,14 @@ class GameFragmentViewModel(
             return
         }
 
-        // Ignore if already selected or matched
-        if (card.isFaceUp.value == true) {
-            Log.d(TAG, "onCardSelected: ($row, $col) already faceup.")
+        // Ignore if ineligible for selection
+        if (card.isEnabled.value != true) {
+            Log.d(TAG, "onCardSelected: ($row, $col) disabled.")
             return
         }
 
         Log.d(TAG, "onCardSelected: turning faceUp")
-        card.turnFaceUp()
+        card.flipAnimate()
 
         val first = firstCardViewModel
         if (first == null) {
@@ -102,20 +97,34 @@ class GameFragmentViewModel(
             "gameState: matchedPairs=$matchedPairs "
                     + "first:${firstCardViewModel?.content?.value} "
                     + "second:${secondCardViewModel?.content?.value} "
-                    + "gameCompleted=$eventGameWon"
         )
     }
 
     private fun onMatchSuccessful() {
-        firstCardViewModel?.flagMatched()
-        firstCardViewModel = null
-        secondCardViewModel?.flagMatched()
-        secondCardViewModel = null
+        /*
+         * Retain temporary references to these card models for use during the second card's animation.
+         * The first and second card model properties will be reset immediately in case the user begins
+         * selecting their next cards while this animation completes.
+         */
+        val first = firstCardViewModel
+        val second = secondCardViewModel
+        second?.isAnimated?.observeForever(object : Observer<Boolean> {
+            override fun onChanged(t: Boolean?) {
+                if (t != true) {
+                    first?.flagMatched()
+                    second.flagMatched()
 
-        matchedPairs++
-        if (matchedPairs >= totalPairs) {
-            onGameCompleted()
-        }
+                    matchedPairs++
+                    if (matchedPairs >= totalPairs) {
+                        onGameCompleted()
+                    }
+
+                    second.isAnimated.removeObserver(this)
+                }
+            }
+        })
+        firstCardViewModel = null
+        secondCardViewModel = null
     }
 
     private fun onMatchUnsuccessful() {
@@ -132,25 +141,22 @@ class GameFragmentViewModel(
 
     private fun onMismatchDisplayCompleted() {
         Log.d(TAG, "onMismatchDisplayCompleted: resetting selected cards")
-        firstCardViewModel?.turnFaceDown()
+        firstCardViewModel?.flipAnimate()
         firstCardViewModel = null
-        secondCardViewModel?.turnFaceDown()
+        secondCardViewModel?.flipAnimate()
         secondCardViewModel = null
         jobMismatchDisplay = null
     }
 
     private fun onGameCompleted() {
-        eventGameWon = true
-        _youWinVisibility.value = View.VISIBLE
+        youWinViewModel.animate()
     }
 
     fun onGameRestart() {
-        val randomPairs = UpperLetters().randomPairs(totalPairs)
-        resetGrid(randomPairs)
+        resetGrid(UpperLetters().randomPairs(totalPairs))
 
         matchedPairs = 0
-        _youWinVisibility.value = View.INVISIBLE
-        eventGameWon = false
+        youWinViewModel.hide()
     }
 
     private fun resetGrid(newCards: List<CardContent>) {

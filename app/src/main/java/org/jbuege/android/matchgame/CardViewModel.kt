@@ -44,11 +44,24 @@ class CardViewModel(
     val isEnabled: LiveData<Boolean> by this::_isEnabled
     private val _isEnabled = MutableLiveData(true)
 
+    val isAnimated: LiveData<Boolean> by this::_isAnimated
+    private val _isAnimated = MutableLiveData(false)
+
     /**
      * The resource to display in the card background.
      */
     val backgroundId: LiveData<Int> by this::_backgroundId
     private val _backgroundId = MutableLiveData<Int>(BACK_BACKGROUND)
+
+    fun flipAnimate() {
+        _isEnabled.value = false
+        _isAnimated.value = true
+    }
+
+    fun animationCompleted() {
+        _isAnimated.value = false
+        if (_isFaceUp.value == false) _isEnabled.value = true
+    }
 
     /**
      * Flip the card from face-up to face-down, or vice versa.
@@ -63,8 +76,7 @@ class CardViewModel(
     /**
      * Turns the card to the face-up position.
      */
-    fun turnFaceUp() {
-        if (_isEnabled.value != true) return
+    private fun turnFaceUp() {
         _isFaceUp.value = true
         _backgroundId.value = R.drawable.ic_card_yellow_background
     }
@@ -72,8 +84,7 @@ class CardViewModel(
     /**
      * Turns the card to the face-down position.
      */
-    fun turnFaceDown() {
-        if (_isEnabled.value != true) return
+    private fun turnFaceDown() {
         _isFaceUp.value = false
         _backgroundId.value = BACK_BACKGROUND
     }
@@ -90,6 +101,8 @@ class CardViewModel(
         _isFaceUp.value = false
         _matched.value = false
         _backgroundId.value = BACK_BACKGROUND
+        _isEnabled.value = true
+        _isAnimated.value = false
     }
 
     /**
@@ -104,7 +117,9 @@ class CardViewModel(
         val faceUp = if (isFaceUp.value == true) "faceUp" else "faceDown"
         val contentVisible = if (isContentVisible.value == View.VISIBLE) "contentVisible" else "contentInvisible"
         val matched = if (isMatched.value == true) "matched" else "unmatched"
-        return "{content=${content.value}, $faceUp $contentVisible $matched bgId=${backgroundId.value}}"
+        val enabled = if (isEnabled.value == true) "enabled" else "disabled"
+        val animated = if (isAnimated.value == true) "animated" else ""
+        return "{content=${content.value}, $faceUp $contentVisible $matched $enabled $animated bgId=${backgroundId.value}}"
     }
 
     companion object {
