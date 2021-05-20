@@ -53,6 +53,10 @@ class GameFragmentViewModel(
         return newGrid
     }
 
+    fun onGameStart() {
+        deal()
+    }
+
     fun onCardSelected(row: Int, col: Int) {
         Log.d(TAG, "onCardSelected: started on card ($row, $col)")
         logGameState()
@@ -108,9 +112,9 @@ class GameFragmentViewModel(
          */
         val first = firstCardViewModel
         val second = secondCardViewModel
-        second?.isAnimated?.observeForever(object : Observer<Boolean> {
-            override fun onChanged(t: Boolean?) {
-                if (t != true) {
+        second?.isFlipAnimated?.observeForever(object : Observer<CardViewModel?> {
+            override fun onChanged(t: CardViewModel?) {
+                if (t == null) {
                     first?.flagMatched()
                     second.flagMatched()
 
@@ -119,7 +123,7 @@ class GameFragmentViewModel(
                         onGameCompleted()
                     }
 
-                    second.isAnimated.removeObserver(this)
+                    second.isFlipAnimated.removeObserver(this)
                 }
             }
         })
@@ -154,9 +158,9 @@ class GameFragmentViewModel(
 
     fun onGameRestart() {
         resetGrid(UpperLetters().randomPairs(totalPairs))
-
         matchedPairs = 0
         youWinViewModel.hide()
+        deal()
     }
 
     private fun resetGrid(newCards: List<CardContent>) {
@@ -164,6 +168,16 @@ class GameFragmentViewModel(
         for (row in grid) {
             for (col in row) {
                 col.reset(cards.removeFirst())
+            }
+        }
+    }
+
+    private fun deal() {
+        var delay = 0L
+        for (row in grid) {
+            for (col in row) {
+                col.dealAnimate(delay)
+                delay += 100L
             }
         }
     }

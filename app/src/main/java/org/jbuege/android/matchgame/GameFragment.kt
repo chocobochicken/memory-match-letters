@@ -33,6 +33,7 @@ class GameFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+        viewModel.onGameStart()
         return binding.root
     }
 

@@ -21,8 +21,9 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:animateFlipCard="@{cardViewModel.isAnimated}"
-        app:cardViewModel="@{cardViewModel}"
+        android:visibility="@{cardViewModel.isVisible}"
+        app:animateFlipCard="@{cardViewModel.isFlipAnimated}"
+        app:animateDealCard="@{cardViewModel.isDealAnimated}"
         >
 
         <ImageView

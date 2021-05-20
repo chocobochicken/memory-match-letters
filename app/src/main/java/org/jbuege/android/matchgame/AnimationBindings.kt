@@ -7,12 +7,41 @@ import android.animation.ObjectAnimator
 import android.view.View
 import androidx.databinding.BindingAdapter
 
+@BindingAdapter("animateDealCard")
+fun animateDealCard(cardView: View, cardViewModel: CardViewModel?) {
+    if (cardViewModel == null) return
+
+    val parent = cardView.parent as View
+    val startX = (parent.width - cardView.width) / 2
+    val startY = parent.height.toFloat()
+    val diffX = cardView.x - startX
+    val diffY = cardView.y - startY
+
+    // Move card offscreen before start of animation, and reset visibility
+    cardView.translationX = -diffX
+    cardView.translationY = -diffY
+    cardView.visibility = View.VISIBLE
+
+    val animX = ObjectAnimator.ofFloat(cardView, View.TRANSLATION_X, 0f)
+    val animY = ObjectAnimator.ofFloat(cardView, View.TRANSLATION_Y, 0f)
+    with(AnimatorSet()) {
+        playTogether(animX, animY)
+        addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator?) {
+                super.onAnimationEnd(animation)
+                cardViewModel.dealAnimationCompleted()
+            }
+        })
+        start()
+    }
+}
+
 /**
  * Animates flipping a card horizontally to see the "other side."
  */
-@BindingAdapter("animateFlipCard", "cardViewModel")
-fun animateFlipCard(cardView: View, animated: Boolean?, cardViewModel: CardViewModel) {
-    if (animated != true) return
+@BindingAdapter("animateFlipCard")
+fun animateFlipCard(cardView: View, cardViewModel: CardViewModel?) {
+    if (cardViewModel == null) return
 
     val direction = if (cardViewModel.isFaceUp.value != true) 1 else -1
 
@@ -27,7 +56,7 @@ fun animateFlipCard(cardView: View, animated: Boolean?, cardViewModel: CardViewM
     frontIn.addListener(object : AnimatorListenerAdapter() {
         override fun onAnimationEnd(animation: Animator?) {
             super.onAnimationEnd(animation)
-            cardViewModel.animationCompleted()
+            cardViewModel.flipAnimationCompleted()
         }
     })
     with(AnimatorSet()) {

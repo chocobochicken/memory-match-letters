@@ -1,16 +1,16 @@
 package org.jbuege.android.matchgame
 
 import android.view.View
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * Models collection of views representing a single card.
  */
 class CardViewModel(
     content: String
-) {
+) : ViewModel() {
 
     /**
      * Content to display in text overlay.
@@ -44,8 +44,14 @@ class CardViewModel(
     val isEnabled: LiveData<Boolean> by this::_isEnabled
     private val _isEnabled = MutableLiveData(true)
 
-    val isAnimated: LiveData<Boolean> by this::_isAnimated
-    private val _isAnimated = MutableLiveData(false)
+    val isVisible: LiveData<Int> by this::_isVisible
+    private val _isVisible = MutableLiveData(View.VISIBLE)
+
+    val isDealAnimated: LiveData<CardViewModel?> by this::_isDealAnimated
+    private val _isDealAnimated = MutableLiveData<CardViewModel?>(null)
+
+    val isFlipAnimated: LiveData<CardViewModel?> by this::_isFlipAnimated
+    private val _isFlipAnimated = MutableLiveData<CardViewModel?>(null)
 
     /**
      * The resource to display in the card background.
@@ -53,13 +59,28 @@ class CardViewModel(
     val backgroundId: LiveData<Int> by this::_backgroundId
     private val _backgroundId = MutableLiveData<Int>(BACK_BACKGROUND)
 
-    fun flipAnimate() {
+    fun dealAnimate(delay: Long) {
         _isEnabled.value = false
-        _isAnimated.value = true
+        _isVisible.value = View.INVISIBLE
+
+        viewModelScope.launch {
+            delay(delay)
+            _isDealAnimated.value = this@CardViewModel
+        }
     }
 
-    fun animationCompleted() {
-        _isAnimated.value = false
+    fun dealAnimationCompleted() {
+        _isDealAnimated.value = null
+        _isEnabled.value = true
+    }
+
+    fun flipAnimate() {
+        _isEnabled.value = false
+        _isFlipAnimated.value = this
+    }
+
+    fun flipAnimationCompleted() {
+        _isFlipAnimated.value = null
         if (_isFaceUp.value == false) _isEnabled.value = true
     }
 
@@ -102,7 +123,8 @@ class CardViewModel(
         _matched.value = false
         _backgroundId.value = BACK_BACKGROUND
         _isEnabled.value = true
-        _isAnimated.value = false
+        _isFlipAnimated.value = null
+        _isDealAnimated.value = null
     }
 
     /**
@@ -115,11 +137,14 @@ class CardViewModel(
 
     override fun toString(): String {
         val faceUp = if (isFaceUp.value == true) "faceUp" else "faceDown"
+        val visible = if (isVisible.value == View.VISIBLE) "visible" else "invisible"
         val contentVisible = if (isContentVisible.value == View.VISIBLE) "contentVisible" else "contentInvisible"
         val matched = if (isMatched.value == true) "matched" else "unmatched"
         val enabled = if (isEnabled.value == true) "enabled" else "disabled"
-        val animated = if (isAnimated.value == true) "animated" else ""
-        return "{content=${content.value}, $faceUp $contentVisible $matched $enabled $animated bgId=${backgroundId.value}}"
+        val dealAnimated = if (isDealAnimated.value != null) "dealAnimated" else ""
+        val flipAnimated = if (isFlipAnimated.value != null) "flipAnimated" else ""
+        return "{content=${content.value}, $faceUp $visible $contentVisible $matched $enabled $dealAnimated " +
+                "$flipAnimated bgId=${backgroundId.value}}"
     }
 
     companion object {
