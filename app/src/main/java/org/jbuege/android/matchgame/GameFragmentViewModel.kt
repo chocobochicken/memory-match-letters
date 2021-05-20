@@ -112,21 +112,31 @@ class GameFragmentViewModel(
          */
         val first = firstCardViewModel
         val second = secondCardViewModel
-        second?.isFlipAnimated?.observeForever(object : Observer<CardViewModel?> {
+
+        val matchObserver = object : Observer<CardViewModel?> {
             override fun onChanged(t: CardViewModel?) {
                 if (t == null) {
-                    first?.flagMatched()
-                    second.flagMatched()
-
                     matchedPairs++
                     if (matchedPairs >= totalPairs) {
                         onGameCompleted()
                     }
-
-                    second.isFlipAnimated.removeObserver(this)
+                    second?.isMatchAnimated?.removeObserver(this)
                 }
             }
-        })
+        }
+
+        val flipObserver = object : Observer<CardViewModel?> {
+            override fun onChanged(t: CardViewModel?) {
+                if (t == null) {
+                    first?.flagMatched()
+                    second?.flagMatched()
+                    second?.isFlipAnimated?.removeObserver(this)
+                    second?.isMatchAnimated?.observeForever(matchObserver)
+                }
+            }
+        }
+
+        second?.isFlipAnimated?.observeForever(flipObserver)
         firstCardViewModel = null
         secondCardViewModel = null
     }

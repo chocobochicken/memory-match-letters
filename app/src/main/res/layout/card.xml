@@ -24,6 +24,7 @@
         android:visibility="@{cardViewModel.isVisible}"
         app:animateFlipCard="@{cardViewModel.isFlipAnimated}"
         app:animateDealCard="@{cardViewModel.isDealAnimated}"
+        app:animateMatch="@{cardViewModel.isMatchAnimated}"
         >
 
         <ImageView

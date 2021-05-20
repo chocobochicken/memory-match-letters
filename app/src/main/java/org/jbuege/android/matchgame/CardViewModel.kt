@@ -53,6 +53,9 @@ class CardViewModel(
     val isFlipAnimated: LiveData<CardViewModel?> by this::_isFlipAnimated
     private val _isFlipAnimated = MutableLiveData<CardViewModel?>(null)
 
+    val isMatchAnimated: LiveData<CardViewModel?> by this::_isMatchAnimated
+    private val _isMatchAnimated = MutableLiveData<CardViewModel?>(null)
+
     /**
      * The resource to display in the card background.
      */
@@ -82,6 +85,16 @@ class CardViewModel(
     fun flipAnimationCompleted() {
         _isFlipAnimated.value = null
         if (_isFaceUp.value == false) _isEnabled.value = true
+    }
+
+    fun matchAnimate() {
+        _isEnabled.value = false
+        _isMatchAnimated.value = this
+    }
+
+    fun matchAnimationCompleted() {
+        _isMatchAnimated.value = null
+        _backgroundId.value = R.drawable.ic_card_pink_background
     }
 
     /**
@@ -115,7 +128,7 @@ class CardViewModel(
      */
     fun flagMatched() {
         _matched.value = true
-        _backgroundId.value = R.drawable.ic_card_pink_background
+        matchAnimate()
     }
 
     private fun reset() {

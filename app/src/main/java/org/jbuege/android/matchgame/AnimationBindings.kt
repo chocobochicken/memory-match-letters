@@ -65,6 +65,32 @@ fun animateFlipCard(cardView: View, cardViewModel: CardViewModel?) {
     }
 }
 
+@BindingAdapter("animateMatch")
+fun animateMatch(cardView: View, cardViewModel: CardViewModel?) {
+    if (cardViewModel == null) return
+
+    val animX = ObjectAnimator.ofFloat(cardView, View.SCALE_X, 1.2f).apply {
+        repeatCount = 1
+        repeatMode = ObjectAnimator.REVERSE
+    }
+    val animY = ObjectAnimator.ofFloat(cardView, View.SCALE_Y, 1.2f).apply {
+        repeatCount = 1
+        repeatMode = ObjectAnimator.REVERSE
+    }
+
+    val animatorSet = AnimatorSet()
+    with(animatorSet) {
+        playTogether(animX, animY)
+        addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator?) {
+                super.onAnimationEnd(animation)
+                cardViewModel.matchAnimationCompleted()
+            }
+        })
+        start()
+    }
+}
+
 /**
  * Animations scale-out appearance of "You Win" banner.
  */
